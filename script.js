@@ -4,7 +4,7 @@ ctx.font = "15px Roboto";
 ctx.fillStyle = "#000000";
 
 let userText = document.getElementById('textBox');
-let submitButton = document.getElementById('submitButton');
+let submitButton = document.getElementById('submission');
 let output = document.getElementById('output');
 let refreshButton = document.getElementById('refreshButton');
 
@@ -70,4 +70,22 @@ var animation = bodymovin.loadAnimation({
     loop: true,
     
     autoplay: true,    
-    });                  
+    });          
+    
+    
+ 
+ var loginButton = document.getElementById("loginButton");
+
+        // Sélectionnez le div du captcha par son ID
+        var captchaModal = document.getElementById("captchaModal");
+
+        // Ajoutez un gestionnaire d'événements pour le clic sur le bouton de connexion
+        loginButton.addEventListener("click", function() {
+            // Affichez le captcha en changeant sa propriété de style pour le rendre visible
+            captchaModal.style.display = "block";
+        });
+
+        var close = document.getElementById("closeButton");
+        close.addEventListener('click', function(){
+            captchaModal.style.display = "none";
+        });
