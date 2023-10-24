@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,46 +11,50 @@
 <body>
     <div>
         
+            <div class="droite">
+                <div class="login-left">
+                    <div class="login2">
+                        <h2>CryptoTools</h2>
+                        <h3> Log in to your Account</h3>
+                        <p>Hi, Welcome again.</p>
+                        <p class="middle">Log in with your Username</p>
         
-            <div class="login left">
-                <div class="login2">
-                    <h2>CryptoTools</h2>
-                    <h3> Log in to your Account</h3>
-                    <p>Hi, Welcome again.</p>
-                    <p class="middle">Log in with your Username</p>
-    
-               
-                 <div class="placeholderr">
-                    <input type="text" placeholder="Username" />
-			        <input type="password" placeholder="Password" />
-                    <button type="submit">Login</button>
-                    <!--
-                        <div id="captchaBackground">
-                    <canvas id="captcha">captcha text</canvas>
-                    <input id="textBox" type="text" name="text"  />
-                    <div id="buttons">
-                        <input id="submitButton" type="submit" />
-                        <button id="refreshButton" type="submit">Refresh</button>
-                    </div>
-    
-                    <span id="output"></span>
-                    </div>
-    
-                    -->
-                    
-                 </div>
-    
+                   
+                        <div class="placeholderr">
+                            <form method="post" action="login.php">
+                                <div class="center">
+                                 <input type="text" placeholder="Username" />
+                                <input type="password" placeholder="Password" />
+                                <button id="loginButton" type="button">Login</button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                        
+                        <div id="captchaModal" class="modal">
+                            <div class="modal-content">
+                                <span class="close" id="closeButton">&times;</span>
+                                <canvas id="captcha">captcha text</canvas>
+
+                                <input id="textBox" type="text" name="text" />
+                                <div id="buttons">
+                                    <button id="refreshButton" type="button">Refresh</button>
+                                    <button id="submission" type="button">Submission</button>
+                                </div>
+                                <span id="output"></span>
+                            </div>
+                        </div>
                 </div>
-                 
+
             </div>
+           
             <div class="login right">
                 <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
-                <dotlottie-player src="https://lottie.host/942aa4aa-343a-49bd-b387-5534d624fb90/jt6hI4bKsy.json" background="transparent" speed="1" style="width: 400px; height: 400px;" loop autoplay></dotlottie-player>            
+                <dotlottie-player src="https://lottie.host/942aa4aa-343a-49bd-b387-5534d624fb90/jt6hI4bKsy.json" background="transparent" speed="1" style="width: 400px; height: 400px; " loop autoplay></dotlottie-player>            
             </div>
     </div>
-    <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js" integrity="sha512-jEnuDt6jfecCjthQAJ+ed0MTVA++5ZKmlUcmDGBv2vUI/REn6FuIdixLNnQT+vKusE2hhTk2is3cFvv5wA+Sgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <script src="script.js"></script>
 
     
 

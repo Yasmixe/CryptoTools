@@ -10,39 +10,98 @@
   <body>
     <header class="top">
       <div class="navbar">
-          <div class="logo"><a href="#"></a>crypto</div>
+          <div class="logo"><a href="#"></a>CryptoTool</div>
           <ul class="links">
-            <li><a href= "index.html">home </a></li>
             <li><a href= "index.html">Send messages </a></li>
             <li><a href= "mailbox.html">mailbox </a></li>
             <li><a href="login.html" class="logout_btn">log out </a></li>
           </ul>
           
       </div>
+      
     </header>
     
     <div class="contact-section">
-      <div class="contact-info">
-        <div>types de cryptages </div>
-        <select name="types de cryptages">
-          <option>cesar</option>
-          <option>miroir</option>
-        </select> 
-        <div>Destinataire</div>
-        <select name="contact">
-          <option>conatct 1</option>
-          <option>contact 2</option>
-        </select>
-      </div>
-      <div class="contact-form">
-        <h2>Cryptages</h2>
-        <form class="contact" action="" method="post">
-          <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
-          <input type="submit" name="submit" class="send-btn" value="Send">
-        </form>
-      </div>
-    </div>
-    <!--contact section end-->
+    <form action="index.php" method="post">
+        <div class="center">
+            <h3 >Send Anonymous Messages</h3>
+            <label for="contacts">Select a contact:</label>
+            <select id="contacts" name="contacts">
+            <?php
+                    // Connectez-vous à la base de données pour récupérer la liste des utilisateurs
+                    try {
+                        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+                        $stmt = $conn->prepare("SELECT uname FROM Utilisateurs");
+                        $stmt->execute();
+                        
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<option value='" . $row['uname'] . "'>" . $row['uname'] . "</option>";
+                        }
+                    } catch (PDOException $e) {
+                        echo "Erreur : " . $e->getMessage();
+                    }
+                ?>
+                <option value="contact1">Contact 1</option>
+                <option value="contact2">Contact 2</option>
+                <option value="contact3">Contact 3</option>
+            </select>
+        </div>
+        <div class="center">
+            <label for="types">Choose encryption type:</label>
+            <form action="index.php" method="post">
+            <select id="types" name="types">
+                <option value="cesar">Cesar</option>
+                <option value="miroir">Miroir</option>
+                <option value="affine">Affine</option>
+            </select>
+        </div>
+        <form action="index.php" method="post">
+        <div id="cesar-key" style="display: none;">
+            <label for="cle">Enter the Cesar key:</label>
+            <input type="number" id="cle" name="cle" min="1" max="10">
+        </div>
+        <form action="index.php" method="post">
+        <div id="affine-params" style="display: none;">
+            <label for="a">Enter parameter 'a'</label>
+            <input type="text" id="a" name="a">
+            <label for="b">Enter parameter 'b'</label>
+            <input type="text" id="b" name="b">
+        </div>
+        <div class="center">
+            <label for="message">Your Message:</label>
+            <textarea name="message" rows="5" required></textarea>
+        </div>
+        <div class="center">
+            <input id="send" type="submit" value="Send">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    document.getElementById("types").addEventListener("change", function () {
+        var selectedOption = this.value;
+        var cesarKey = document.getElementById("cesar-key");
+        var affineParams = document.getElementById("affine-params");
+
+        if (selectedOption === "cesar") {
+            cesarKey.style.display = "block";
+            affineParams.style.display = "none";
+        } else if (selectedOption === "affine") {
+            cesarKey.style.display = "none";
+            affineParams.style.display = "block";
+        } else {
+            cesarKey.style.display = "none";
+            affineParams.style.display = "none";
+        }
+    });
+</script>
+
+
+        
+      </div>
+      
+    </div>
   </body>
 </html>
