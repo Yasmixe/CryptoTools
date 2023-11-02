@@ -83,8 +83,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 } else {
     // Ajout manuel d'un nouvel utilisateur avec mot de passe chiffré
-    $manualUsername = "mama";
-    $manualPassword = "12345";
+    $manualUsername = "papa";
+    $manualPassword = "aeb1@";
     $shift = 3;
     $encryptedManualPassword = encryptCesar($manualPassword, $shift);
     $encryptedManualUsername = encryptCesar($manualUsername, $shift);
@@ -268,7 +268,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 authenticateUser(username, password).then(function (authenticationSuccess) {
                     if (authenticationSuccess) {
                         console.log("Authentification est réussie.");
-                        const Liste = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+                        const Liste = [
+                            "a",
+                            "e",
+                            "b",
+                            "D",
+                            "I",
+                            "U",
+                            "1",
+                            "4",
+                            "6",
+                            "@",
+                            "#",
+                            "&"
+                        ];
                         var password = document.getElementById('passwordInput').value;
                         const start_time = Date.now();
                         let chaine = "";

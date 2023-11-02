@@ -83,8 +83,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 } else {
     // Ajout manuel d'un nouvel utilisateur avec mot de passe chiffré
-    $manualUsername = "mama";
-    $manualPassword = "12345";
+    $manualUsername = "mimi";
+    $manualPassword = "77033";
     $shift = 3;
     $encryptedManualPassword = encryptCesar($manualPassword, $shift);
     $encryptedManualUsername = encryptCesar($manualUsername, $shift);
@@ -268,52 +268,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 authenticateUser(username, password).then(function (authenticationSuccess) {
                     if (authenticationSuccess) {
                         console.log("Authentification est réussie.");
-                        const Liste = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-                        var password = document.getElementById('passwordInput').value;
-                        const start_time = Date.now();
-                        let chaine = "";
-                        function fonction1(chaine, mdp) {
-                            if (chaine === mdp) {
-                                alert("Le mot de passe est : " + chaine);
-                            }
-                        }
+                        const dictionnaire = ["00000", "11111", "12345", "77033", "71201", "66666", "98765", "01010", "55555", "12121"];
 
-                        for (const i of Liste) {
-                            for (const j of Liste) {
-                                for (const k of Liste) {
-                                    for (const l of Liste) {
-                                        for (const m of Liste) {
-                                            console.log(i + j + k + l + m + '\n');
 
-                                        }
-                                    }
 
+                        function attaqueParDictionnaire(dictionnaire, password) {
+                            for (const mot of dictionnaire) {
+                                if (mot === password) {
+                                    return mot;
                                 }
                             }
+                            return null;
                         }
-                        function forcebrut(mdp) {
-                            for (const i of Liste) {
-                                chaine = i;
-                                fonction1(chaine, mdp);
-                                for (const i2 of Liste) {
-                                    chaine = i + i2;
-                                    fonction1(chaine, mdp);
-                                    for (const i3 of Liste) {
-                                        chaine = i + i2 + i3;
-                                        fonction1(chaine, mdp);
-                                        for (const i4 of Liste) {
-                                            chaine = i + i2 + i3 + i4;
-                                            fonction1(chaine, mdp);
-                                            for (const i5 of Liste) {
-                                                chaine = i + i2 + i3 + i4 + i5;
-                                                fonction1(chaine, mdp);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+
+                        const resultat = attaqueParDictionnaire(dictionnaire, password);
+
+                        if (resultat !== null) {
+                            alert(`Le mot de passe est : ${resultat}`);
+                        } else {
+                            alert("Le mot de passe n'a pas été trouvé dans le dictionnaire.");
                         }
-                        forcebrut(password);
+
                         generate_captcha();
                         captchaModal.style.display = "block";
                     } else {

@@ -1,61 +1,20 @@
 <?php
 //fonction cesar
 include 'connect.php';
-
-/*-------------------------------------------------------------------------------------------------*/
-
-function pgcd($a, $b) {
-    while ($b != 0) {
-        $temp = $a % $b;
-        $a = $b;
-        $b = $temp;
-    }
-    return $a;
-}
-
-function mod_inverse($a, $n) {
-    for ($x = 1; $x < $n; $x++) {
-        if (($a * $x) % $n == 1) {
-            return $x;
-        }
-    }
-    return null;
-}
-
-function chiffrement_affine($message, $a, $b) {
-    $message_chiffre = "";
-    $n = 26;  // Taille de l'alphabet
-
-    if (pgcd($a, $n) != 1) {
-        throw new Exception("La clé 'a' doit être choisie de telle sorte que pgcd(a, 26) = 1");
-    }
-
-    for ($i = 0; $i < strlen($message); $i++) {
-        $char = $message[$i];
-        if (ctype_alpha($char)) {  // Vérifiez si la lettre est alphabétique
-            $decalage = (ctype_upper($char)) ? 65 : 97;
-            $lettre_chiffree = chr((($a * (ord($char) - $decalage) + $b) % $n) + $decalage);
-            $message_chiffre .= $lettre_chiffree;
-        } else {
-            $message_chiffre .= $char;  // On ne chiffre pas les symboles et caractères spéciaux
-        }
-    }
-    return $message_chiffre;
-}
-/****************************************************************************************************************************** */
 function encryptCesar($text, $shift) {
-  $result = "";
-  for ($i = 0; $i < strlen($text); $i++) {
-      $char = $text[$i];
-      if (ctype_alpha($char)) {
-          $isLowerCase = ctype_lower($char);
-          $asciiStart = $isLowerCase ? ord('a') : ord('A');
-          $result .= chr(($isLowerCase ? (ord($char) - $asciiStart + $shift) % 26 : (ord($char) - $asciiStart + $shift) % 26) + $asciiStart);
-      } else {
-          $result .= $char;
-      }
-  }
-  return $result;
+    $result = "";
+    for ($i = 0; $i < strlen($text); $i++) {
+        $char = $text[$i];
+        if (ctype_alpha($char)) {
+            $isLowerCase = ctype_lower($char);
+            $asciiStart = $isLowerCase ? ord('a') : ord('A');
+            $encryptedChar = chr(($isLowerCase ? (ord($char) - $asciiStart + $shift) % 26 : (ord($char) - $asciiStart + $shift) % 26) + $asciiStart);
+            $result .=  $encryptedChar; // Ajoute 'C' avant le caractère chiffré
+        } else {
+            $result .= $char;
+        }
+    }
+    return $result;
 }
 
 function miroir($word) {
@@ -93,39 +52,37 @@ function chiffre_miroir_et_cesar($phrase) {
 }
 
 
-session_start();
-$sender = isset($_SESSION['username']) ? $_SESSION['username'] : 'Unknown Sender';
-// Vérifie si le formulaire a été soumis
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Récupère les données du formulaire
-    $contact = $_POST["contacts"];
-    $encryptionType = $_POST["types"];
-    $message = $_POST["message"];
-    $key = $_POST["cle"];
-    $a = $_POST['a'];
-    $b = $_POST['b'];
+function Cesar($text, $cle_cesar) {
+    $resultat = "";
+    $longueur = strlen($text);
+    for ($i = 0; $i < $longueur; $i++) {
+        $caractere = $text[$i];
+        if (ctype_alpha($caractere)) {
+            $decalage = $cle_cesar;
+            $minuscule = (ctype_lower($caractere));
   
-    $keyy = $a.$b;
-    // Traitez le message en fonction du type de cryptage
-    switch ($encryptionType) {
-        case "cesar":
-            $encryptedMessage = encryptCesar($message, $key);
-            break;
-        case "miroir":
-          $encryptedMessage = chiffre_miroir_et_cesar($message);
-            break;
-        case "affine":
-          $encryptedMessage = chiffrement_affine($message, $a, $b);
-          $sql = "INSERT INTO messages (`type_chiffrement`, `key`, `message`, `sender`, `receiver`) 
-            VALUES ('$encryptionType', '$keyy', '$encryptedMessage', '$sender', '$contact')";
-   
-
-            break;
-        default:
-            break;
+            $ascii_de_base = ($minuscule) ? ord('a') : ord('A');
+            $nouveau_caractere = chr((ord($caractere) - $ascii_de_base + $decalage) % 26 + $ascii_de_base);
+  
+            $resultat .= $nouveau_caractere;
+        } else {
+            $resultat .= $caractere;
+        }
     }
+    return $resultat;
+  }
+  function DechiffrementUser($phrase) {
+    $mots = explode(" ", $phrase);
+    $resultat = [];
+    foreach ($mots as $mot) { 
+            $resultat[] = Cesar($mot, -3);
+        } 
     
-    // Connexion à la base de données
+    return implode(" ", $resultat);
+  }
+  
+
+// Connexion à la base de données
     $servername = "localhost";
     $dbname = "cryptotool";
     $username = "root";
@@ -138,21 +95,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("La connexion à la base de données a échoué : " . $conn->connect_error);
     }
     
-    //Insérez les données dans la table `messages`
-    
+// Example usage:
+session_start();
+$sender = isset($_SESSION['username']) ? $_SESSION['username'] : 'Unknown Sender';
+// Vérifie si le formulaire a été soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Récupère les données du formulaire
+    $contact = $_POST["contacts"];
+    $encryptionType = $_POST["types"];
+    $message = $_POST["message"];
+    $key = isset($_POST["cle"]) ? $_POST["cle"] : 0;  // Assurez-vous que la clé est définie
+
+    // Traitez le message en fonction du type de cryptage
+    switch ($encryptionType) {
+        case "cesar":
+            $encryptedMessage = 'C' . encryptCesar($message, $key);
+            break;
+        case "miroir":
+            $encryptedMessage = chiffre_miroir_et_cesar($message);
+            break;
+        case "affine":
+            // Mettez ici le code de déchiffrement Affine
+            break;
+        default:
+            // Gérez le cas où le type de cryptage n'est pas reconnu
+            break;
+    }
+
+    // Insérez les données dans la table `messages`
     $sql = "INSERT INTO messages (`type_chiffrement`, `key`, `message`, `sender`, `receiver`) 
-            VALUES ('$encryptionType', '$keyy', '$encryptedMessage', '$sender', '$contact')";
-   
+            VALUES ('$encryptionType', '$key', '$encryptedMessage', '$sender', '$contact')";
+
     if ($conn->query($sql) === TRUE) {
         echo "Le message a été enregistré avec succès dans la base de données.";
     } else {
         echo "Erreur : " . $sql . "<br>" . $conn->error;
-    } 
-    
+    }
+
     // Fermez la connexion à la base de données
     $conn->close();
 }
+
 ?>
+
 
 
 <!DOCTYPE html>
@@ -167,54 +152,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <body>
     <header class="top">
       <div class="navbar">
-          <div class="logo"><a href="#"></a>crypto</div>
+          <div class="logo"><a href="#"></a>CryptoTool</div>
           <ul class="links">
-            <li><a href= "index.html">home </a></li>
-            <li><a href= "index.html">Send messages </a></li>
-            <li><a href= "mailbox.html">mailbox </a></li>
-            <li><a href="login.html" class="logout_btn">log out </a></li>
+            <li><a href= "index.php">Send messages </a></li>
+            <li><a href= "mailbox.php">mailbox </a></li>
+            <li><a href="login.php" class="logout_btn">log out </a></li>
           </ul>
           
       </div>
+      
     </header>
     
     <div class="contact-section">
     <form action="index.php" method="post">
-        <div>
+        <div class="center">
+            <h3 >Send Anonymous Messages</h3>
             <label for="contacts">Select a contact:</label>
             <select id="contacts" name="contacts">
-                <option value="contact1">Contact 1</option>
-                <option value="contact2">Contact 2</option>
-                <option value="contact3">Contact 3</option>
+            <?php
+                    // Connectez-vous à la base de données pour récupérer la liste des utilisateurs
+                    try {
+                        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                        $stmt = $conn->prepare("SELECT uname FROM Utilisateurs");
+                        $stmt->execute();
+                        
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            $decryptedName = DechiffrementUser($row['uname']); // Déchiffrez le nom du contact
+                            echo "<option value='" . $decryptedName . "'>" . $decryptedName . "</option>";
+                        }
+                    } catch (PDOException $e) {
+                        echo "Erreur : " . $e->getMessage();
+                    }
+                ?>
             </select>
         </div>
-        <div>
-            <label for="types">Choose encryption type:</label>
-            <form action="index.php" method="post">
-            <select id="types" name="types">
-                <option value="cesar">Cesar</option>
-                <option value="miroir">Miroir</option>
-                <option value="affine">Affine</option>
-            </select>
-        </div>
-        <form action="index.php" method="post">
-        <div id="cesar-key" style="display: none;">
-            <label for="cle">Enter the Cesar key:</label>
-            <input type="number" id="cle" name="cle" min="1" max="10">
-        </div>
-        <form action="index.php" method="post">
-        <div id="affine-params" style="display: none;">
-            <label for="a">Enter parameter 'a' (a > 0):</label>
-            <input type="text" id="a" name="a">
-            <label for="b">Enter parameter 'b' (b > 0):</label>
-            <input type="text" id="b" name="b">
-        </div>
-        <div>
+        <div class="center">
+    <label for="types">Choose encryption type:</label>
+    <select id="types" name="types">
+        <option value="cesar">Cesar</option>
+        <option value="miroir">Miroir</option>
+        <option value="affine">Affine</option>
+    </select>
+</div>
+<div id="cesar-key" style="display: none;">
+    <label for="cle">Enter the Cesar key:</label>
+    <input type="number" id="cle" name="cle" min="1" max="10">
+</div>
+<div id="affine-params" style="display: none;">
+    <label for="a">Enter parameter 'a'</label>
+    <input type="text" id="a" name="a">
+    <label for="b">Enter parameter 'b'</label>
+    <input type="text" id="b" name="b">
+</div>
+
+        <div class="center">
             <label for="message">Your Message:</label>
             <textarea name="message" rows="5" required></textarea>
         </div>
-        <div>
-            <input type="submit" value="Send">
+        <div class="center">
+            <input id="send" type="submit" value="Send">
         </div>
     </form>
 </div>
@@ -232,7 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cesarKey.style.display = "none";
             affineParams.style.display = "block";
         } else {
-            cesarKey.style.display = "none";
+            cesarKey.style.display = "block";
             affineParams.style.display = "none";
         }
     });
@@ -243,6 +241,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       
     </div>
-    <!--contact section end-->
   </body>
 </html>
